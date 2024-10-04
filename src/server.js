@@ -42,7 +42,6 @@ export const startServer = () => {
   const { studentId } = req.params;
     const student = await getStudentById(studentId);   
     
-    // Відповідь, якщо контакт не знайдено
 	if (!student) {
 	  res.status(404).json({
 		  message: 'Student not found'
@@ -50,7 +49,6 @@ export const startServer = () => {
 	  return;
 	}
 
-	// Відповідь, якщо контакт знайдено
     res.status(200).json({
       data: student,
     });
@@ -67,9 +65,5 @@ export const startServer = () => {
       message: 'Something went wrong',
       error: err.message,
     });
-  });
-
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
   });
 };
