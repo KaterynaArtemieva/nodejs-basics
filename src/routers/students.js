@@ -15,41 +15,55 @@ import {
   updateStudentSchema,
 } from '../validation/students.js';
 import { isValidId } from '../middlewares/isValidId.js';
+import { authenticate } from '../middlewares/authenticate.js';
+import { checkRoles } from '../middlewares/checkRoles.js';
+import { ROLES } from '../constants/index.js';
 
-const router = Router();
+const studentsRouter = Router();
 
-router.get('/students', ctrlWrapper(getStudentsController));
+studentsRouter.use(authenticate);
 
-router.get(
-  '/students/:studentId',
+studentsRouter.get(
+  '/',
+  checkRoles(ROLES.TEACHER),
+  ctrlWrapper(getStudentsController),
+);
+
+studentsRouter.get(
+  '/:studentId',
+  checkRoles(ROLES.TEACHER, ROLES.PARENT),
   isValidId,
   ctrlWrapper(getStudentByIdController),
 );
 
-router.post(
-  '/students',
+studentsRouter.post(
+  '/',
+  checkRoles(ROLES.TEACHER),
   validateBody(createStudentSchema),
   ctrlWrapper(createStudentController),
 );
 
-router.delete(
-  '/students/:studentId',
+studentsRouter.delete(
+  '/:studentId',
+  checkRoles(ROLES.TEACHER),
   isValidId,
   ctrlWrapper(deleteStudentController),
 );
 
-router.put(
-  '/students/:studentId',
+studentsRouter.put(
+  '/:studentId',
+  checkRoles(ROLES.TEACHER),
   validateBody(createStudentSchema),
   isValidId,
   ctrlWrapper(upsertStudentController),
 );
 
-router.patch(
-  '/students/:studentId',
+studentsRouter.patch(
+  '/:studentId',
+  checkRoles(ROLES.TEACHER, ROLES.PARENT),
   validateBody(updateStudentSchema),
   isValidId,
   ctrlWrapper(patchStudentController),
 );
 
-export default router;
+export default studentsRouter;
